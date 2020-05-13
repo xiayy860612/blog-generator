@@ -5,6 +5,7 @@
 - [TypeScript][]
 - [react][]
 - [Ant Design][]
+- [react-redux][]
 
 ---
 
