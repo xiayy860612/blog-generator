@@ -13,3 +13,5 @@
 [react]: https://reactjs.org/
 [create-react-app]: https://create-react-app.dev/
 [Ant Design]: https://ant.design/index-cn
+[react-redux]: https://redux.js.org/
+[react-router]: https://reacttraining.com/react-router/web/guides/quick-start

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu } from 'antd';
+import { Menu, Button } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import Category from '../../reducers/Category/domain';
 
@@ -17,7 +17,7 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
     const children = category.children.map((child) => {
       return (
         <Menu.Item key={child.key}>
-          <span>{child.title}</span>
+          <a href={"/" + child.key + "/"}>{child.title}</a>
         </Menu.Item>
       )
     })
