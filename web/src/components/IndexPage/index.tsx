@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 
-const AppIndex: React.FC = () => {
+const IndexPage: React.FC = () => {
     return (
       <div className="App">
         <header className="App-header">
@@ -22,4 +22,4 @@ const AppIndex: React.FC = () => {
     );
   }
 
-  export default AppIndex;
+  export default IndexPage;

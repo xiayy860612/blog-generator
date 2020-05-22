@@ -1,0 +1,24 @@
+@startuml ""
+
+package React {
+    entity ViewProps
+    entity ViewComponent
+}
+
+package Redux {
+    entity DomainModel
+    storage DataStore
+    control ActionCreator
+}
+
+node Server
+
+ViewComponent --> ActionCreator: trigger
+ActionCreator ..> Server: communication
+ActionCreator --> DomainModel: generate domain object from server response
+ActionCreator --> DataStore: update domain data in store
+DataStore --> ViewProps: update view props
+ViewProps --> ViewComponent: update view
+
+
+@enduml
