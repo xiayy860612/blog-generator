@@ -13,10 +13,11 @@ import Category from '../../reducers/Category/domain';
 import { AppState } from '../../reducers';
 import { dispatchGetUserInfoAction } from '../../actions/UserInfo';
 import { dispatchGetCategoriesAction } from '../../actions/Category';
-import ListPage from '../../components/ListPage';
-import SinglePage from '../../components/SinglePage';
+import ListPage, { ListPageProps } from '../../components/ListPage';
+import SinglePage, { SinglePageProps } from '../../components/SinglePage';
 import { dispatchGetAllArticlesAction } from '../../actions/Article';
 import { CategoryArticles, Article } from '../../reducers/Article/domain';
+import FooterView from '../../components/Footer';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -24,7 +25,7 @@ const { SubMenu } = Menu;
 interface AppProps {
   match?: any,
   userInfo: UserInfo,
-  menus: Array<Category>,
+  categories: Array<Category>,
   articles: Array<CategoryArticles>
 
   getUserInfoAction: any,
@@ -41,13 +42,66 @@ class App extends React.Component<AppProps> {
     this.setState({ collapsed });
   };
 
- getCategoryArticles(category: string): CategoryArticles {
+  getCategoryArticles(categoryKey: string): ListPageProps {
+    const category = this.props.categories
+      .filter(v => v.children)
+      .flatMap(v => v.children)
+      .find(v => v?.key == categoryKey)
+    if (!category) {
+      return {
+        category: "",
+        categoryKey: "",
+        articles: []
+      }
+    }
+
     let articles: Array<Article> = this.props.articles
-      .filter(v => v.categoryKey == category)
+      .filter(v => v.categoryKey == categoryKey)
       .flatMap(v => v.articles)
     return {
-      categoryKey: category,
+      category: category.title,
+      categoryKey: categoryKey,
       articles: articles
+    }
+  }
+
+  getCategoryArticle(categoryKey: string, articleKey: string): SinglePageProps {
+    const category = this.props.categories
+      .filter(v => v.children)
+      .flatMap(v => v.children)
+      .find(v => v?.key == categoryKey)
+    if (!category) {
+      return {
+        category: "",
+        categoryKey: categoryKey,
+        article: {
+          title: "",
+          key: "",
+          path: ""
+        }
+      }
+    }
+
+    const article: Article | undefined = this.props.articles
+      .filter(v => v.categoryKey == categoryKey)
+      .flatMap(v => v.articles)
+      .find(a => a.key == articleKey)
+    if (!article) {
+      return {
+        category: "",
+        categoryKey: categoryKey,
+        article: {
+          title: "",
+          key: "",
+          path: ""
+        }
+      }
+    }
+
+    return {
+      category: category.title,
+      categoryKey: category.key,
+      article: article
     }
   }
 
@@ -63,7 +117,7 @@ class App extends React.Component<AppProps> {
     if (this.state.collapsed) {
       userElement = <div />;
     }
-    const menus = this.props.menus;
+    const menus = this.props.categories;
     return (
       <Router>
         <Row>
@@ -85,34 +139,19 @@ class App extends React.Component<AppProps> {
               <div className="site-layout-backgroud">
                 <Switch>
                   <Route path="/" exact component={IndexPage} />
-                  <Route path="/:category(\w+[\w/]*\w+)/:article(\w+)" exact strict render={(routeProps) => {
+                  <Route path="/:category(\w+[\w/]*\w+)/:article(.+)" exact strict render={(routeProps) => {
                     return <SinglePage 
-                      category={routeProps.match.params.category} 
-                      article={routeProps.match.params.article} 
+                      {...this.getCategoryArticle(routeProps.match.params.category, routeProps.match.params.article)}
                     />
                   }} />
                   <Route path="/:category(\w+[\w/]*\w+)/" exact strict render={(routeProps) => {
-                    return <ListPage categoryArticles={this.getCategoryArticles(routeProps.match.params.category)} />
+                    return <ListPage {...this.getCategoryArticles(routeProps.match.params.category)} />
                   }} />
                 </Switch>
               </div>
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-              {/* mv to Footer component */}
-              <div className="container">
-                <div className="row">
-                    <div className="col-xs-12 col-sm-12 col-md-12 text-center">
-                        <small className="text-muted">Copyright© 2018-2020 s2u2m</small>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-xs-12 col-sm-12 col-md-12 text-center">
-                        <a href="http://www.miitbeian.gov.cn/">
-                            <small className="text-muted">蜀ICP备18013492号</small>
-                          </a>
-                      </div>
-                  </div>
-              </div>
+              <FooterView />
             </Footer>
           </Layout>
         </Layout>
@@ -126,7 +165,7 @@ class App extends React.Component<AppProps> {
 function mapStateToProps(state: AppState) {
   return {
     userInfo: state.userInfo,
-    menus: state.categories,
+    categories: state.categories,
     articles: state.articles
   }
 }
