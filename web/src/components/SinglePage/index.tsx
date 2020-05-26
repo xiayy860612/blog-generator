@@ -10,10 +10,7 @@ import ShareCommon from '../ShareCommon';
 const { Header, Content, Footer } = Layout;
 
 export interface SinglePageProps {
-  category: string,
-  categoryKey: string,
-  article: Article,
-  content?: string
+  article: Article
 }
 
 interface SinglePageState {
@@ -45,12 +42,12 @@ class SinglePage extends React.Component<SinglePageProps, SinglePageState> {
     return (
       <Layout className="layout">
         <Content>
-          <Breadcrumb style={{ margin: '16px 0' }}>
+          {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>
               <a href={"/" + this.props.categoryKey + "/"}>{this.props.category}</a>
             </Breadcrumb.Item>
             <Breadcrumb.Item>{this.props.article.title}</Breadcrumb.Item>
-          </Breadcrumb>
+          </Breadcrumb> */}
           <Typography>
             {/* <Title>{this.props.article.title}</Title> */}
             <Paragraph>
@@ -66,9 +63,5 @@ class SinglePage extends React.Component<SinglePageProps, SinglePageState> {
       );
   }
 }
-
-// const SinglePage: React.FC<SinglePageProps> = (props: SinglePageProps) => {
-  
-// }
 
 export default SinglePage;

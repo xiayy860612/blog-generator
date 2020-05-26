@@ -1,8 +1,5 @@
 import React, { Children } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
-import './index.css';
-import 'antd/dist/antd.css';
 import { Layout, Menu, Breadcrumb, Row, Col } from 'antd';
 import IndexPage from '../../components/IndexPage';
 import UserInfoCard from '../../components/UserInfo';
@@ -18,6 +15,8 @@ import SinglePage, { SinglePageProps } from '../../components/SinglePage';
 import { dispatchGetAllArticlesAction } from '../../actions/Article';
 import { CategoryArticles, Article } from '../../reducers/Article/domain';
 import FooterView from '../../components/Footer';
+import 'antd/dist/antd.css';
+import './index.css';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -42,38 +41,36 @@ class App extends React.Component<AppProps> {
     this.setState({ collapsed });
   };
 
-  getCategoryArticles(categoryKey: string): ListPageProps {
+  getCategoryArticles(categoryPath: string): ListPageProps {
+    const categories = categoryPath.split("/", 2)
     const category = this.props.categories
-      .filter(v => v.children)
-      .flatMap(v => v.children)
-      .find(v => v?.key == categoryKey)
+      .filter(c => c.title == categories[0])
+      .flatMap(c => c.children)
+      .find(c => c?.title == categories[1])
     if (!category) {
       return {
         category: "",
-        categoryKey: "",
         articles: []
       }
     }
 
     let articles: Array<Article> = this.props.articles
-      .filter(v => v.categoryKey == categoryKey)
+      .filter(v => v.categoryKey == categoryPath)
       .flatMap(v => v.articles)
     return {
       category: category.title,
-      categoryKey: categoryKey,
       articles: articles
     }
   }
 
-  getCategoryArticle(categoryKey: string, articleKey: string): SinglePageProps {
+  getCategoryArticle(categoryPath: string, articleKey: string): SinglePageProps {
+    const categories = categoryPath.split("/", 2)
     const category = this.props.categories
-      .filter(v => v.children)
-      .flatMap(v => v.children)
-      .find(v => v?.key == categoryKey)
+      .filter(c => c.title == categories[0])
+      .flatMap(c => c.children)
+      .find(c => c?.title == categories[1])
     if (!category) {
       return {
-        category: "",
-        categoryKey: categoryKey,
         article: {
           title: "",
           key: "",
@@ -83,13 +80,14 @@ class App extends React.Component<AppProps> {
     }
 
     const article: Article | undefined = this.props.articles
-      .filter(v => v.categoryKey == categoryKey)
+      .filter(v => v.categoryKey == categories.join("/"))
       .flatMap(v => v.articles)
-      .find(a => a.key == articleKey)
+      .find(a => {
+        const paths = a.path.split("/")
+        return paths.length == 0 ? false : paths[paths.length-1].startsWith(articleKey)
+      })
     if (!article) {
       return {
-        category: "",
-        categoryKey: categoryKey,
         article: {
           title: "",
           key: "",
@@ -99,8 +97,6 @@ class App extends React.Component<AppProps> {
     }
 
     return {
-      category: category.title,
-      categoryKey: category.key,
       article: article
     }
   }
@@ -120,32 +116,34 @@ class App extends React.Component<AppProps> {
     const menus = this.props.categories;
     return (
       <Router>
-        <Row>
         <Layout>
           <Sider
             collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} 
-            // style={{
-            //   overflow: 'auto',
-            //   // position: 'fixed',
-            //   backgroundColor: 'dark',
-            //   height: '100%'
-            // }}
+            style={{
+              overflow: 'auto',
+              position: 'fixed',
+              height: '100%',
+              left: 0
+            }}
           >
             {userElement}
             <CategoryList categories={menus} />
           </Sider>
-          <Layout className="site-layout">
+          <Layout className="site-layout" style={{ marginLeft: 200 }}>
             <Content style={{ margin: '0 16px 0' }}>
               <div className="site-layout-backgroud">
                 <Switch>
                   <Route path="/" exact component={IndexPage} />
-                  <Route path="/:category(\w+[\w/]*\w+)/:article(.+)" exact strict render={(routeProps) => {
+                  <Route path="/:category(.+)/" exact strict render={(routeProps) => {
+                    return <ListPage {...this.getCategoryArticles(routeProps.match.params.category)} />
+                  }} />
+                  <Route path="/:category(.+)/:article" exact strict render={(routeProps) => {
                     return <SinglePage 
                       {...this.getCategoryArticle(routeProps.match.params.category, routeProps.match.params.article)}
                     />
                   }} />
-                  <Route path="/:category(\w+[\w/]*\w+)/" exact strict render={(routeProps) => {
-                    return <ListPage {...this.getCategoryArticles(routeProps.match.params.category)} />
+                  <Route render={() => {
+                    return <div>Not Found</div>
                   }} />
                 </Switch>
               </div>
@@ -155,9 +153,7 @@ class App extends React.Component<AppProps> {
             </Footer>
           </Layout>
         </Layout>
-        </Row>
-        
-        </Router>
+      </Router>
     );
   }
 }

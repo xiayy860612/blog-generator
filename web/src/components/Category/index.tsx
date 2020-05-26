@@ -10,20 +10,19 @@ export interface CategoryListProps {
 
 const CategoryList: React.FC<CategoryListProps> = (props) => {
   const categories = props.categories.map((category) => {
-    if (!category.children) {
-      return []
+    let children: JSX.Element[] = []
+    if (category.children) {
+      children = category.children.map((child) => {
+        return (
+          <Menu.Item key={child.title}>
+            <a href={"/" + category.title + "/" + child.title + "/"}>{child.title}</a>
+          </Menu.Item>
+        )
+      })
     }
-
-    const children = category.children.map((child) => {
-      return (
-        <Menu.Item key={child.key}>
-          <a href={"/" + child.key + "/"}>{child.title}</a>
-        </Menu.Item>
-      )
-    })
     
     return (
-      <SubMenu key={category.key} title={category.title} >
+      <SubMenu key={category.title} title={category.title} >
         {children}
       </SubMenu>
     )

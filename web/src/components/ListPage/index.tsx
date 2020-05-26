@@ -8,8 +8,12 @@ const { Header, Content, Footer } = Layout;
 
 export interface ListPageProps {
   category: string,
-  categoryKey: string,
   articles: Array<Article>
+}
+
+function getAriticleUrl(article: Article) {
+  const prefix = article.path.lastIndexOf(".")
+  return article.path.substring(0, prefix)
 }
 
 const ListPage: React.FC<ListPageProps> = (props: ListPageProps) => {
@@ -22,7 +26,7 @@ const ListPage: React.FC<ListPageProps> = (props: ListPageProps) => {
         dataSource={props.articles}
         renderItem={item => <List.Item>
           <List.Item.Meta 
-            title={<Button type="link" href={"/" + props.categoryKey + "/" + item.key}>{item.title}</Button>}
+            title={<Button type="link" href={getAriticleUrl(item)}>{item.title}</Button>}
           />
         </List.Item>}
       />

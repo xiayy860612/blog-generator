@@ -1,16 +1,20 @@
 {
   "IT": {
     "title": "IT",
-    "key": "it",
-    "icon": "",
     "children": [
       {
-        "title": "Java",
-        "key": "java"
+        "title": "Java"
       },
       {
-        "title": "C++",
-        "key": "cpp"
+        "title": "C++"
+      }
+    ]
+  },
+  "IT2": {
+    "title": "IT2",
+    "children": [
+      {
+        "title": "JS"
       }
     ]
   }

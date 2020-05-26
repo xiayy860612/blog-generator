@@ -1,14 +1,12 @@
 {
-  "java": [
+  "IT/Java": [
     {
       "title": "Java并发",
-      "key": "java-concurrency",
-      "path": "/articles/IT/Java/Java并发.md"
+      "path": "/IT/Java/Java并发.md"
     },
     {
       "title": "Java Stream",
-      "key": "java-stream",
-      "path": "/articles/IT/Java/Java Stream.md"
+      "path": "/IT/Java/Java Stream.md"
     }
   ]
 }
