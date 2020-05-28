@@ -1,0 +1,33 @@
+{
+  "IT": {
+    "title": "IT",
+    "children": [
+      {
+        "title": "Java",
+        "articles": [
+          {
+            "title": "Java并发",
+            "path": "/IT/Java/Java并发.md"
+          }
+        ]
+      },
+      {
+        "title": "C++"
+      }
+    ],
+    "articles": [
+      {
+        "title": "Java Stream",
+        "path": "/IT/Java Stream.md"
+      }
+    ]
+  },
+  "IT2": {
+    "title": "IT2",
+    "children": [
+      {
+        "title": "JS"
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-import Category from "./domain"
+import Category from "./Category"
 import { CategoryActions, CategoryActionType } from "../../actions/Category"
 
 const initState: Array<Category> = []

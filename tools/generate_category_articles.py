@@ -2,6 +2,7 @@
 import json
 import os
 import re
+import argparse
 
 
 class JsonEncoder(json.JSONEncoder):
@@ -15,13 +16,13 @@ class Category:
     def __init__(self, title):
         self.title = title
         self.children = []
+        self.articles = []
 
     def add_sub_category(self, sub):
         self.children.append(sub)
 
-    def to_json(self):
-        return self.__dict__
-
+    def add_article(self, article):
+        self.articles.append(article)
 
 class Article:
     def __init__(self, title, path):
@@ -29,10 +30,10 @@ class Article:
         self.path = path
 
 class CategoryArticlesGenerator:
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, output):
         self.root_dir = root_dir
         self.categories = {}
-        self.articles = {}
+        self.output = output
 
     def exec(self):
         if not os.path.isdir(self.root_dir):
@@ -46,36 +47,41 @@ class CategoryArticlesGenerator:
             root_file_path = os.path.join(self.root_dir, file)
             if not os.path.isdir(root_file_path):
                 continue
-            
-            category = Category(file)
+
+            category = self.get_category(file, file)
             self.categories[file] = category
-            for sub in os.listdir(root_file_path):
-                if sub.startswith("."):
-                    continue
-
-                sub_path = os.path.join(file, sub)
-                root_sub_path = os.path.join(self.root_dir, sub_path)
-                if not os.path.isdir(root_sub_path):
-                    continue
-                
-                sub_category = Category(sub)
-                category.add_sub_category(sub_category)
-
-                print("sub_path:" + sub_path)
-                sub_articles = []
-                for root, dirs, files in os.walk(root_sub_path):
-                    for article in files:
-                        rel_article_path = os.path.join(sub_path, article)
-                        sub_articles.append(Article(article, rel_article_path))
-                self.articles[sub_path] = sub_articles
         self.__output_file()
 
+    def get_category(self, title, rel_path):
+        category = Category(title)
+
+        category_root = os.path.join(self.root_dir, rel_path)
+        for file in os.listdir(category_root):
+            if file.startswith("."):
+                continue
+            
+            file_rel_path = os.path.join(rel_path, file)
+            file_path = os.path.join(self.root_dir, file_rel_path)
+            if os.path.isdir(file_path):
+                sub_category = self.get_category(file, file_rel_path)
+                category.add_sub_category(sub_category)
+                continue
+
+            if os.path.isfile(file_path):
+                article = Article(file, file_path)
+                category.add_article(article)
+                continue
+        return category
+
     def __output_file(self):
-        with open("categoryList.json", 'w', encoding='utf8') as json_file:
+        with open(self.output, 'w', encoding='utf8') as json_file:
             json.dump(self.categories, json_file, ensure_ascii=False, cls=JsonEncoder, indent=2)
-        with open("articles.json", 'w', encoding='utf8') as json_file:
-            json.dump(self.articles, json_file, ensure_ascii=False, cls=JsonEncoder, indent=2)
 
 
 if __name__ == "__main__":
-    CategoryArticlesGenerator("/Users/xyy/workspace/sds/sds-airflow-pipeline").exec()
+    default_output = os.path.join(os.path.curdir, "categoryArticles.json")
+    parser = argparse.ArgumentParser("Generate category articles json file")
+    parser.add_argument("src_root", help="abstract root path of category articles")
+    parser.add_argument("-o", "--output", default=default_output, help="abstract root path of category articles")
+    args = parser.parse_args()
+    CategoryArticlesGenerator(args.src_root, args.output).exec()

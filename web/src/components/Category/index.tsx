@@ -1,8 +1,7 @@
 import React from 'react';
 import { Menu, Button } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import Category from '../../reducers/Category/domain';
-
+import Category from '../../reducers/Category/Category';
 
 export interface CategoryListProps {
   categories: Array<Category>
