@@ -91,7 +91,9 @@ class App extends React.Component<AppProps> {
             <Content style={{ margin: '0 16px 0' }}>
               <div className="site-layout-backgroud">
                 <Switch>
-                  <Route path="/" exact component={IndexPage} />
+                  <Route path="/" exact render={props => {
+                    return <IndexPage categories={this.props.categories} />
+                  }} />
                   <Route path="/:category(.+)/" exact strict render={(routeProps) => {
                     return <ListPage category={
                       this.getCategory(routeProps.match.params.category) ?? {
