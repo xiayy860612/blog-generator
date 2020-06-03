@@ -25,9 +25,10 @@ class Category:
         self.articles.append(article)
 
 class Article:
-    def __init__(self, title, path):
+    def __init__(self, title, path, update_time):
         self.title = title
         self.path = path
+        self.update_time = update_time
 
 class CategoryArticlesGenerator:
     def __init__(self, root_dir, output):
@@ -68,10 +69,17 @@ class CategoryArticlesGenerator:
                 continue
 
             if os.path.isfile(file_path):
-                article = Article(file, file_path)
-                category.add_article(article)
+                article = self.__get_article(file, file_rel_path)
+                if article:
+                    category.add_article(article)
                 continue
         return category
+
+    def __get_article(self, file, file_rel_path):
+        file_path = os.path.join(self.root_dir, file_rel_path)
+        info = os.stat(file_path)
+        return Article(file, "/" + file_rel_path, info.st_mtime)
+
 
     def __output_file(self):
         with open(self.output, 'w', encoding='utf8') as json_file:
