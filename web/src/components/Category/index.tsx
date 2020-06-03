@@ -11,13 +11,25 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
   const categories = props.categories.map((category) => {
     let children: JSX.Element[] = []
     if (category.children) {
-      children = category.children.map((child) => {
+      const items = category.children.map((child) => {
         return (
           <Menu.Item key={child.title}>
             <a href={"/" + category.title + "/" + child.title + "/"}>{child.title}</a>
           </Menu.Item>
         )
       })
+      children.push(...items)
+    }
+
+    if (category.articles) {
+      const items = category.articles.map(article => {
+        return (
+          <Menu.Item key={article.title}>
+            <a href={"/" + category.title + "/" + article.title}>{article.title}</a>
+          </Menu.Item>
+        )
+      })
+      children.push(...items)
     }
     
     return (
