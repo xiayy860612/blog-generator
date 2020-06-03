@@ -104,7 +104,8 @@ class App extends React.Component<AppProps> {
                       article={
                         this.getCategoryArticle(routeProps.match.params.category, routeProps.match.params.article) ?? {
                           title: "",
-                          path: ""
+                          path: "",
+                          update_time: 0
                         }
                       }
                     />

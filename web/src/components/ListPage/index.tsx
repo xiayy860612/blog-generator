@@ -30,7 +30,9 @@ function getListItems(category: Category): Array<ListItem> {
     }
   }) ?? []
 
-  const articles = category.articles?.map(article => {
+  const articles = category.articles?.sort((a, b) => {
+    return a.update_time >= b.update_time ? 1 : -1;
+  }).map(article => {
     return {
       type: ListItemType.ARTICLE,
       title: article.title
