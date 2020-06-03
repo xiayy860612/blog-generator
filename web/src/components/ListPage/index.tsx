@@ -5,6 +5,7 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import Category from '../../reducers/Category/Category';
 import { HomeOutlined } from '@ant-design/icons';
 import BreadcrumbElement from '../BreadcrumbElement';
+import { articleOrder } from '../../reducers/Category/Article';
 
 const { Header, Content, Footer } = Layout;
 
@@ -30,9 +31,7 @@ function getListItems(category: Category): Array<ListItem> {
     }
   }) ?? []
 
-  const articles = category.articles?.sort((a, b) => {
-    return a.update_time >= b.update_time ? 1 : -1;
-  }).map(article => {
+  const articles = category.articles?.sort(articleOrder).map(article => {
     return {
       type: ListItemType.ARTICLE,
       title: article.title
