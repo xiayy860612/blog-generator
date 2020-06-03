@@ -1,6 +1,7 @@
+import Article from "./Article";
 
 export default interface Category {
   title: string
-  key: string
   children?: Array<Category>
+  articles?: Array<Article>
 }

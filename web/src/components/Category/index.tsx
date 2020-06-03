@@ -1,8 +1,7 @@
 import React from 'react';
 import { Menu, Button } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import Category from '../../reducers/Category/domain';
-
+import Category from '../../reducers/Category/Category';
 
 export interface CategoryListProps {
   categories: Array<Category>
@@ -10,20 +9,19 @@ export interface CategoryListProps {
 
 const CategoryList: React.FC<CategoryListProps> = (props) => {
   const categories = props.categories.map((category) => {
-    if (!category.children) {
-      return []
+    let children: JSX.Element[] = []
+    if (category.children) {
+      children = category.children.map((child) => {
+        return (
+          <Menu.Item key={child.title}>
+            <a href={"/" + category.title + "/" + child.title + "/"}>{child.title}</a>
+          </Menu.Item>
+        )
+      })
     }
-
-    const children = category.children.map((child) => {
-      return (
-        <Menu.Item key={child.key}>
-          <a href={"/" + child.key + "/"}>{child.title}</a>
-        </Menu.Item>
-      )
-    })
     
     return (
-      <SubMenu key={category.key} title={category.title} >
+      <SubMenu key={category.title} title={category.title} >
         {children}
       </SubMenu>
     )

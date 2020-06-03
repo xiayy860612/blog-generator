@@ -1,19 +1,17 @@
 import React from 'react';
 import Markdown from 'react-markdown';
-import { Article } from '../../reducers/Article/domain';
 import Title from 'antd/lib/typography/Title';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import axios from "axios";
-import { Typography, Layout, Menu, Breadcrumb } from 'antd';
+import { Typography, Layout, Menu, Breadcrumb, Space } from 'antd';
 import ShareCommon from '../ShareCommon';
+import Article from '../../reducers/Category/Article';
+import BreadcrumbElement from '../BreadcrumbElement';
 
 const { Header, Content, Footer } = Layout;
 
 export interface SinglePageProps {
-  category: string,
-  categoryKey: string,
-  article: Article,
-  content?: string
+  article: Article
 }
 
 interface SinglePageState {
@@ -43,20 +41,17 @@ class SinglePage extends React.Component<SinglePageProps, SinglePageState> {
 
   render() {
     return (
-      <Layout className="layout">
+      <Layout className="layout" style={{marginTop: 30}}>
         <Content>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>
-              <a href={"/" + this.props.categoryKey + "/"}>{this.props.category}</a>
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>{this.props.article.title}</Breadcrumb.Item>
-          </Breadcrumb>
-          <Typography>
-            {/* <Title>{this.props.article.title}</Title> */}
-            <Paragraph>
-              <Markdown source={this.state.content} />
-            </Paragraph>
-          </Typography>
+          <Space direction="vertical">
+            <BreadcrumbElement />
+            <Typography>
+              {/* <Title>{this.props.article.title}</Title> */}
+              <Paragraph>
+                <Markdown source={this.state.content} />
+              </Paragraph>
+            </Typography>
+          </Space>
         </Content>
         <Footer>
           <ShareCommon />
@@ -66,9 +61,5 @@ class SinglePage extends React.Component<SinglePageProps, SinglePageState> {
       );
   }
 }
-
-// const SinglePage: React.FC<SinglePageProps> = (props: SinglePageProps) => {
-  
-// }
 
 export default SinglePage;
